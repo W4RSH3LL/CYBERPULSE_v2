@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Cyber Pulse</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header class="topbar navbar navbar-dark bg-dark d-flex flex-wrap align-items-center px-3 py-2">
+        <a class="navbar-brand d-flex align-items-center" href="#">
+            🛡️ Cyber Pulse
+        </a>
+
+        <ul class="nav ms-auto">
+            <li class="nav-item">
+                <a href="/" class="nav-link">Dashboard</a>
+            </li>
+            {% if current_user.role == "admin" %}
+            <li class="nav-item">
+                <a href="/settings" class="nav-link">Settings</a>
+            </li>
+            {% endif %}
+            <li class="nav-item dropdown">
+                <button class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown">
+                    {{ current_user.username }}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="/profile">Profile</a></li>
+                    <li><a class="dropdown-item" href="/export_pdf">Export PDF</a></li>
+                    <li><a class="dropdown-item" href="/logout">Logout</a></li>
+                </ul>
+            </li>
+        </ul>
+    </header>
+
+    <!-- Main content -->
+    <main class="container my-4">
+        <div class="row g-4">
+
+            <!-- Connected Devices -->
+            <section class="card col-12">
+                <h2>Connected Devices</h2>
+                <div class="table-responsive">
+                    <table class="table table-dark table-striped">
+                        <thead>
+                            <tr>
+                                <th>IP</th>
+                                <th>Hostname</th>
+                                <th>Type</th>
+                                <th>MAC</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for h in hosts %}
+                            <tr>
+                                <td>{{ h.ip }}</td>
+                                <td>{{ h.hostname }}</td>
+                                <td>
+                                    {% if h.type == "phone" %}📱
+                                    {% elif h.type == "printer" %}🖨️
+                                    {% elif h.type == "iot" %}📡
+                                    {% else %}💻
+                                    {% endif %}
+                                </td>
+                                <td>{{ h.mac }}</td>
+                                <td>{{ h.status }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Charts -->
+            <section class="card col-md-6 col-lg-4">
+                <h2>Device Overview</h2>
+                <canvas id="deviceChart"></canvas>
+            </section>
+
+            <section class="card col-md-6 col-lg-4">
+                <h2>Scan Activity</h2>
+                <canvas id="scanChart"></canvas>
+            </section>
+
+            <section class="card col-md-6 col-lg-4">
+                <h2>Security Alerts</h2>
+                {% if alerts %}
+                <ul class="alerts">
+                    {% for a in alerts %}
+                    <li>⚠️ {{ a }}</li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="muted">No alerts</p>
+                {% endif %}
+            </section>
+
+            <!-- 🧠 AI Chat Assistant -->
+            <section class="card col-12 col-lg-6">
+                <h2>🧠 Cyber AI Assistant</h2>
+            
+                <div id="chat-box" class="chat-box">
+                    <div class="chat-hint">
+                        Ask about scans, alerts, or network security…
+                    </div>
+                </div>
+            
+                <div class="input-group mt-3">
+                    <input id="chat-input" class="form-control" placeholder="Type a message and press Enter…"
+                        onkeydown="if(event.key==='Enter') sendMessage()" />
+                    <button class="btn btn-primary" onclick="sendMessage()">Send</button>
+                </div>
+            </section>
+
+
+
+            <!-- History -->
+            <section class="card col-md-6 col-lg-6">
+                <h2>Scan History</h2>
+                <ul>
+                    {% for h in history %}
+                    <li>{{ h.time }} — {{ h.name }}</li>
+                    {% endfor %}
+                </ul>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Charts Data -->
+    <script>
+        window.deviceStats = {{ device_stats | tojson }};
+        window.scanChartLabels = {{ scan_chart_labels | tojson }};
+        window.scanChartValues = {{ scan_chart_values | tojson }};
+    </script>
+
+    <!-- Dashboard JS -->
+    <script src="/static/js/dashboard.js"></script>
+
+    <!-- AI Chat JS -->
+    <script src="/static/js/chat.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <footer class="text-center py-2">
+        © 2025 - 2026 CyberPulse. Project Open Innovation
+    </footer>
+
+</body>
+
+</html>

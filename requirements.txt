@@ -1,0 +1,9 @@
+flask
+psutil
+dnspython
+requests
+flask-login
+werkzeug
+reportlab
+dnspython
+python-whois

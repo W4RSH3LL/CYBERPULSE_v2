@@ -1,0 +1,32 @@
+services:
+  dashboard:
+    build: .
+    container_name: cyber_pulse_v2
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+      - logs:/app/logs
+    environment:
+      FLASK_APP: app.py
+      FLASK_RUN_HOST: 0.0.0.0
+      FLASK_ENV: development
+    restart: unless-stopped
+    profiles: ["default"]
+
+  dashboard-linux:
+    build: .
+    container_name: cyber_pulse_v2
+    network_mode: "host"   # Linux-only host networking
+    volumes:
+      - .:/app
+      - logs:/app/logs
+    environment:
+      FLASK_APP: app.py
+      FLASK_RUN_HOST: 0.0.0.0
+      FLASK_ENV: development
+    restart: unless-stopped
+    profiles: ["linux"]
+
+volumes:
+  logs:
